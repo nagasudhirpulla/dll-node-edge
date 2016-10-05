@@ -1,41 +1,54 @@
-// Overview of edge.js: http://tjanczuk.github.com/edge
-
-var edge = require('../lib/edge')
-    , http = require('http');
+var edge = require('./lib/edge');
 
 var getVoltage = edge.func(function() {/*
+    #r "C:\Program Files\nodejs\EzDNAApiNet.dll"
     using System;
     using System.Threading.Tasks;
     using System.Runtime.InteropServices;
-    using System.Security.Principal;
+    using InStep.eDNA.EzDNAApiNet;
     class Startup
     {
-        [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern bool LogonUser(string lpszUsername, string lpszDomain, string lpszPassword,
-            int dwLogonType, int dwLogonProvider, out IntPtr phToken);
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        public extern static bool CloseHandle(IntPtr handle);
         public async Task<object> Invoke(dynamic input)
         {
-            return await Task<object>.Run(() => { 
-                IntPtr token;
-                if (!Startup.LogonUser(input.user, null, input.password, 3, 0, out token))
-                {
-                    throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
-                }
+            return await Task<object>.Run(() => {
                 try {
-                    using (WindowsIdentity id = new WindowsIdentity(token))
-                    {
-                        return new {
-                            name = id.Name,
-                            sid = id.User.ToString()
-                        };
-                    }
+                        double value;
+                        DateTime time;
+                        string status, desc, units;
+                        int iRet;
+                        value = -1;
+                        time = DateTime.Now;
+                        status = "";
+                        desc = "";
+                        units = "";
+                        string pointName = input.point;
+                        iRet = RealTime.DNAGetRTAll(pointName, out value, out time, out status, out desc, out units);
+                        return new {value = value, time = time, status = status, desc = desc, units = units};
                 }
                 finally {
-                    Startup.CloseHandle(token);
+
                 }
             });
         }
     }
 */});
+
+function getPointData(pnt, callback){
+    getVoltage({ point: pnt }, function (error, result) {
+        if (error) {
+            console.log(error);
+            callback(error);
+        }
+        else {
+            console.log(JSON.stringify(result));
+            callback(null, result);
+        }
+    })
+}
+
+getPointData("WRLDC.PHASOR.WRDC0783", function(error, result){
+    console.log("reached here...");
+    if(error){
+        console.log("Oops, error occurred...");
+    }
+});

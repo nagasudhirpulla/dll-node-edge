@@ -1,0 +1,19 @@
+{
+  "name": "dll-node-edge",
+  "version": "1.0.0",
+  "description": "Boilerplate code for node js functions to access functions in dll files",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nagasudhirpulla/dll-node-edge.git"
+  },
+  "author": "Sudhir",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nagasudhirpulla/dll-node-edge/issues"
+  },
+  "homepage": "https://github.com/nagasudhirpulla/dll-node-edge#readme"
+}
